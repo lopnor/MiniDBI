@@ -127,7 +127,7 @@ class MiniDBD::mysql::StatementHandle does MiniDBD::StatementHandle {
         # warn "in MiniDBD::mysql::StatementHandle.execute()";
         my $statement = $!statement;
         while @params.elems>0 and $statement.index('?')>=0 {
-            my $param = self!quote(@params.shift);
+            my $param = self.quote(@params.shift);
             if $param ~~ /<-[0..9]>/ {
                 $statement .= subst("?","'$param'"); # quote non numerics
             }
@@ -149,7 +149,7 @@ class MiniDBD::mysql::StatementHandle does MiniDBD::StatementHandle {
         return ($rows == 0) ?? "0E0" !! $rows;
     }
 
-    method !quote ($str is copy) {
+    method quote ($str is copy) {
         $str = $str.subst(/\\/, '\\\\', :g);
         $str = $str.subst(/\x00/, '\\0', :g);
         $str = $str.subst(/\n/, '\\n', :g);

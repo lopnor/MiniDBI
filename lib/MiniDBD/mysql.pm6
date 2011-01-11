@@ -150,13 +150,13 @@ class MiniDBD::mysql::StatementHandle does MiniDBD::StatementHandle {
     }
 
     method quote ($str is copy) {
-        $str = $str.subst(/\\/, '\\\\', :g);
-        $str = $str.subst(/\x00/, '\\0', :g);
-        $str = $str.subst(/\n/, '\\n', :g);
-        $str = $str.subst(/\r/, '\\r', :g);
-        $str = $str.subst("'", "\\'", :g);
-        $str = $str.subst('"', '\\"', :g);
-        $str = $str.subst("\x1a", '\\Z', :g);
+        $str ~~ s:g[\\] = '\\\\';
+        $str ~~ s:g[\x00] = '\\0';
+        $str ~~ s:g[\n] = '\\n';
+        $str ~~ s:g[\r] = '\\r';
+        $str ~~ s:g[\'] = "\\'";
+        $str ~~ s:g[\"] = '\\"';
+        $str ~~ s:g[\x1a] = '\\Z';
         return $str;
     }
 

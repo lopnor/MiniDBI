@@ -350,9 +350,31 @@ class MiniDBD::mysql:auth<mberends>:ver<0.0.1> {
         my $host     = %params<host>     // 'localhost';
         my $port     = %params<port>     // 0;
         my $database = %params<database> // 'mysql';
+        my $result = Q:PIR {
+            .local pmc lib
+            .local pmc client
+            .local pmc result
+            lib = loadlib 'libmysqlclient'
+            $P0 = dlfunc lib, 'mysql_real_connect', 'ppttttiti'
+            $P1 = find_lex '$mysql_client'
+            client = $P1
+            $P2 = find_lex '$host'
+            $S0 = $P2
+            $P2 = find_lex '$user'
+            $S1 = $P2
+            $P2 = find_lex '$password'
+            $S2 = $P2
+            $P2 = find_lex '$database'
+            $S3 = $P2
+            $P2 = find_lex '$port'
+            $I0 = $P2
+            null $S4
+            result = $P0(client, $S0, $S1, $S2, $S3, $I0, $S4, 0)
+            %r = result
+        };
         # real_connect() returns either the same client pointer or null
-        my $result   = mysql_real_connect( $mysql_client, $host,
-            $user, $password, $database, $port, pir::null__P(), 0 );
+#        my $result   = mysql_real_connect( $mysql_client, $host,
+#            $user, $password, $database, $port, pir::null__S(), 0 );
         my $error = mysql_error( $mysql_client );
         my $connection;
         if $error eq '' {
